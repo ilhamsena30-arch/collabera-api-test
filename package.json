@@ -1,0 +1,62 @@
+{
+  "name": "collaborate-api-automation",
+  "version": "1.0.0",
+  "description": "API Test Automation Boilerplate built with Mocha (ES Modules), SuperTest, and Chai. Includes reporting, config management, HTTP mocking, linting, pre-commit hooks, and CI.",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "test": "cross-env NODE_ENV=development mocha --reporter-options \"configFile=reporter-config.json\"",
+    "test:staging": "cross-env NODE_ENV=staging mocha --reporter-options \"configFile=reporter-config.json\"",
+    "test:production": "cross-env NODE_ENV=production mocha --reporter-options \"configFile=reporter-config.json\"",
+    "test:watch": "cross-env NODE_ENV=development mocha --watch",
+    "test:single": "cross-env NODE_ENV=development mocha --grep",
+    "test:allure": "cross-env NODE_ENV=development mocha --reporter allure-mocha",
+    "report": "mochawesome-merge reports/mochawesome/*.json -o reports/mochawesome/merged.json && marge reports/mochawesome/merged.json --reportDir reports/mochawesome",
+    "report:allure": "allure generate allure-results -o reports/allure-report --clean && allure open reports/allure-report",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky"
+  },
+  "keywords": [
+    "api-testing",
+    "automation",
+    "mocha",
+    "supertest",
+    "chai",
+    "boilerplate"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@faker-js/faker": "^10.6.0",
+    "allure-commandline": "^2.43.0",
+    "allure-mocha": "^3.10.2",
+    "chai": "^6.2.2",
+    "cross-env": "^10.1.0",
+    "dotenv": "^17.4.2",
+    "eslint": "^10.9.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-mocha": "^12.0.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "mocha": "^11.8.0",
+    "mocha-junit-reporter": "^2.2.1",
+    "mocha-multi-reporters": "^1.5.1",
+    "mochawesome": "^8.0.1",
+    "mochawesome-merge": "^5.1.1",
+    "nock": "^14.0.17",
+    "prettier": "^3.9.6",
+    "supertest": "^7.2.2"
+  },
+  "lint-staged": {
+    "*.{js,mjs,cjs,json,md,yml,yaml}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  }
+}

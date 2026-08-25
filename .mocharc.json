@@ -1,0 +1,10 @@
+{
+  "spec": ["test/**/*.test.js"],
+  "timeout": 30000,
+  "reporter": "mocha-multi-reporters",
+  "parallel": false,
+  "color": true,
+  "extension": ["js"],
+  "node-option": ["no-warnings"],
+  "require": ["dotenv/config", "test/.mocha-root-hooks.js"]
+}
