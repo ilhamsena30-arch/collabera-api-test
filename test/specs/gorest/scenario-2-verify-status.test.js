@@ -1,15 +1,9 @@
 /**
- * GoRest Scenario 2
- * ---------------------------------------------------------------------------
- * Using  https://gorest.co.in/public/v2/users
- *   - Verify the `status` for the first entry is only either "active" or
- *     "inactive".
- *
- * GET is public on GoRest (no token required), so this suite runs regardless
- * of whether AUTH_TOKEN is configured.
- * ---------------------------------------------------------------------------
+ * GoRest Scenario 2: Verify first entry status is active or inactive.
+ * GET https://gorest.co.in/public/v2/users (public, no token required).
  */
 import { expect } from 'chai';
+import config from '../../../config/env.js';
 import { api } from '../../helpers/api-client.js';
 import { createEmployeeAndExpectNumericId } from '../../helpers/gorest-users.js';
 
@@ -34,9 +28,7 @@ describe('GoRest — Scenario 2: Verify first entry status', function () {
 
     const first = res.body[0];
 
-    // Confirm the first entry has a status field (the scenario's core focus).
     expect(first).to.have.property('status');
-    // ...and that it is one of exactly two allowed values.
     expect(['active', 'inactive']).to.include(first.status);
   });
 
@@ -63,17 +55,14 @@ describe('GoRest — Scenario 2: Verify first entry status', function () {
   });
 
   it('round-trips: a created user is listed with a valid status', async function () {
-    // This sub-case optionally validates create-then-read. It requires a token,
-    // so skip gracefully when AUTH_TOKEN is absent.
-    const { created } = await createEmployeeAndExpectNumericId().catch((err) => {
-      if (err && err.status === 401) {
-        // No/invalid token — skip rather than fail.
-        this.skip();
-      }
-      throw err;
-    });
+    if (!config.auth.token) {
+      // Creating a user needs a token; skip when none is configured.
+      // eslint-disable-next-line mocha/no-pending-tests
+      this.skip();
+    }
 
-    // Fetch the specific user we just created.
+    const { created } = await createEmployeeAndExpectNumericId();
+
     const res = await api.get(`${USERS_PATH}/${created.id}`);
 
     expect(res.status).to.equal(200);
@@ -82,7 +71,6 @@ describe('GoRest — Scenario 2: Verify first entry status', function () {
   });
 
   it('queries with filters and returns matching records', async function () {
-    // GoRest supports filtering any field via query param, e.g. ?status=active
     const res = await api.get(`${USERS_PATH}?per_page=10`);
 
     expect(res.status).to.equal(200);

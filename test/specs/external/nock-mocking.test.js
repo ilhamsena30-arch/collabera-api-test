@@ -1,10 +1,4 @@
-/**
- * Example suite: mocking downstream/external HTTP calls with Nock.
- *
- * Demonstrates isolating your API under test from third-party dependencies
- * and running fully offline. These requests are intercepted at the http
- * module level — no real network traffic occurs.
- */
+/** Demonstrates mocking external/downstream HTTP calls with Nock (fully offline). */
 import { expect } from 'chai';
 import { mockGet, mockPost, cleanupNock } from '../../helpers/nock-mock.js';
 import request from 'supertest';
@@ -41,9 +35,9 @@ describe('External dependency mocking (Nock)', function () {
   it('asserts all defined mocks were actually consumed', async function () {
     mockGet(EXTERNAL_HOST, '/v1/status', { status: 'ok' });
 
-    await request(EXTERNAL_HOST).get('/v1/status');
+    const res = await request(EXTERNAL_HOST).get('/v1/status');
 
-    // All intercepted — no unmatched mocks left behind.
-    expect(true).to.equal(true);
+    expect(res.status).to.equal(200);
+    expect(res.body.status).to.equal('ok');
   });
 });
