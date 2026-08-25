@@ -1,0 +1,5 @@
+{
+  "title": "Sample Post Title",
+  "body": "This is a fixed sample body used for deterministic fixture-based tests.",
+  "userId": 1
+}
