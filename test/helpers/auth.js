@@ -1,38 +1,20 @@
 /**
- * Pluggable authentication helper.
- *
- * Two auth strategies are supported out of the box:
- *
- *   1. Static token  — set AUTH_TOKEN in .env; the token is injected as a
- *      Bearer header by the api-client wrapper automatically. No runtime call.
- *
- *   2. Dynamic login — set AUTH_USERNAME, AUTH_PASSWORD and LOGIN_ENDPOINT.
- *      `getApiToken()` performs a login at runtime, caches the token, and can
- *      refresh it. Enable by calling `enableDynamicAuth()` (see global-setup).
- *
- * JSONPlaceholder has no real auth, so by default tests are unauthenticated.
- * The design is intentionally pluggable: connect a real API and set the env
- * vars above to enable tokenised requests without touching the specs.
+ * Auth helper. Two strategies:
+ *  - Static token: set AUTH_TOKEN (injected by api-client automatically).
+ *  - Dynamic login: set AUTH_USERNAME/AUTH_PASSWORD/LOGIN_ENDPOINT.
  */
 import config from '../../config/env.js';
 import { rawRequest } from './api-client.js';
 
-/** In-memory token cache. */
 let cachedToken = '';
 let dynamicAuthEnabled = false;
 
-/**
- * Enables runtime (login-based) token acquisition.
- * Call once during global setup when using username/password auth.
- */
+/** Enables runtime login-based token acquisition (call once in setup). */
 export function enableDynamicAuth() {
   dynamicAuthEnabled = true;
 }
 
-/**
- * Returns the current bearer token, acquiring it via login if needed.
- * @returns {Promise<string>}
- */
+/** @returns {Promise<string>} current bearer token, logging in if enabled & cached empty. */
 export async function getApiToken() {
   if (dynamicAuthEnabled && !cachedToken) {
     cachedToken = await loginAndGetToken();
@@ -40,12 +22,7 @@ export async function getApiToken() {
   return cachedToken || config.auth.token || '';
 }
 
-/**
- * Performs a login request and returns the token from the payload.
- * Expected to be adapted to the real API's login contract (e.g. token field
- * name, Bearer vs raw, cookies, etc.).
- * @returns {Promise<string>}
- */
+/** Logs in and returns a token. Adapt token field / shape to your API. */
 export async function loginAndGetToken() {
   const { username, password, loginEndpoint } = config.auth;
 
@@ -59,8 +36,7 @@ export async function loginAndGetToken() {
     throw new Error(`Login failed with status ${res.status}`);
   }
 
-  // Adapt to your API's contract. Common shapes:
-  //   { token: '...' } | { access_token: '...' } | { data: { token: '...' } }
+  // Common shapes: { token } | { access_token } | { data: { token } }
   const token = res.body.token || res.body.access_token || res.body.data?.token;
 
   if (!token) {
@@ -70,9 +46,7 @@ export async function loginAndGetToken() {
   return token;
 }
 
-/**
- * Clears the cached token (e.g. in an afterEach hook when isolation is needed).
- */
+/** Clears the cached token (e.g. in an afterEach for isolation). */
 export function clearTokenCache() {
   cachedToken = '';
 }

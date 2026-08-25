@@ -1,21 +1,7 @@
-/**
- * Dynamic payload generators built on @faker-js/faker.
- *
- * Each generator returns a full request body and accepts an `overrides`
- * object to pin specific fields (deterministic tests when needed).
- *
- * Usage:
- *   import { generateUserPayload, generatePostPayload } from './data-generators.js';
- *   const body = generateUserPayload({ name: 'Fixed Name' });
- */
+/** faker-based payload builders. Each accepts an `overrides` object to pin fields. */
 import { faker } from '@faker-js/faker';
 
-/**
- * Builds a user creation payload, optionally merging overrides.
- * Matches the JSONPlaceholder /users contract.
- * @param {Record<string, unknown>} [overrides]
- * @returns {{name: string, username: string, email: string, [k: string]: unknown}}
- */
+/** @param {Record<string, unknown>} [overrides] */
 export function generateUserPayload(overrides = {}) {
   return {
     name: faker.person.fullName(),
@@ -25,11 +11,7 @@ export function generateUserPayload(overrides = {}) {
   };
 }
 
-/**
- * Builds a post creation payload (JSONPlaceholder /posts).
- * @param {Record<string, unknown>} [overrides]
- * @returns {{title: string, body: string, userId: number, [k: string]: unknown}}
- */
+/** @param {Record<string, unknown>} [overrides] */
 export function generatePostPayload(overrides = {}) {
   return {
     title: faker.lorem.sentence(),
@@ -39,11 +21,7 @@ export function generatePostPayload(overrides = {}) {
   };
 }
 
-/**
- * Builds an arbitrary generic object with realistic sample data.
- * Useful for demonstrating non-CRUD endpoints.
- * @param {Record<string, unknown>} [overrides]
- */
+/** @param {Record<string, unknown>} [overrides] */
 export function generateGenericPayload(overrides = {}) {
   return {
     id: faker.string.uuid(),
@@ -55,16 +33,8 @@ export function generateGenericPayload(overrides = {}) {
   };
 }
 
-/**
- * Builds a GoRest user creation payload.
- *
- * GoRest `POST /public/v2/users` requires: name, gender, email, status.
- *   - gender: "male" | "female"
- *   - status: "active" | "inactive"
- *
- * @param {Record<string, unknown>} [overrides]
- * @returns {{name: string, gender: string, email: string, status: string}}
- */
+/** GoRest user payload: name, gender (male/female), email, status (active/inactive). */
+/** @param {Record<string, unknown>} [overrides] */
 export function generateGoRestUserPayload(overrides = {}) {
   return {
     name: faker.person.fullName(),

@@ -1,25 +1,10 @@
-/**
- * SuperTest-based API client wrapper.
- *
- * Provides a pre-configured request facade so specs don't repeat base URL,
- * headers, auth injection, or logging on every call.
- *
- * Usage:
- *   import { api } from './api-client.js';
- *   const res = await api.get('/users/1');
- *   const res = await api.post('/users').send(payload);
- */
+/** SuperTest wrapper with base URL, auth injection, timeout and optional logging. */
 import request from 'supertest';
 import config from '../../config/env.js';
 
-/** Enabled by default; disable in CI noise-sensitive setups via env. */
 const LOG_REQUESTS = process.env.LOG_API_REQUESTS === 'true';
 
-/**
- * Adds the Authorization header if an auth token is available.
- * @param {import('supertest').Test} test
- * @returns {import('supertest').Test}
- */
+/** @param {import('supertest').Test} test */
 function applyAuthHeader(test) {
   if (config.auth.token) {
     test.set('Authorization', `Bearer ${config.auth.token}`);
@@ -27,14 +12,9 @@ function applyAuthHeader(test) {
   return test;
 }
 
-/**
- * Optionally logs the outgoing request for debugging.
- * @param {import('supertest').Test} test
- * @returns {import('supertest').Test}
- */
+/** @param {import('supertest').Test} test */
 function applyRequestLogging(test) {
   if (LOG_REQUESTS) {
-    // Log after the request completes.
     test.then(
       (res) => console.log(`[API] ${test.method} ${test.url} -> ${res.status}`),
       (err) => console.error(`[API] ${test.method} ${test.url} FAILED`, err.message),
@@ -43,12 +23,7 @@ function applyRequestLogging(test) {
   return test;
 }
 
-/**
- * Builds a request bound to the configured API base URL.
- * @param {string} method HTTP method
- * @param {string} path relative path (e.g. '/users/1')
- * @returns {import('supertest').Test}
- */
+/** @param {string} method HTTP method @param {string} path relative path */
 function apiRequest(method, path) {
   const test = request(config.apiBaseUrl)[method](path);
   test.set('Accept', 'application/json');
@@ -57,13 +32,7 @@ function apiRequest(method, path) {
   return applyRequestLogging(test);
 }
 
-/**
- * Convenience facade mirroring the common HTTP verbs.
- * @example
- *   api.get('/users')        api.post('/users').send(body)
- *   api.put('/users/1')      api.patch('/users/1')
- *   api.delete('/users/1')
- */
+/** HTTP verb facade: api.get('/users'), api.post('/users').send(body), etc. */
 export const api = {
   get: (path) => apiRequest('get', path),
   post: (path) => apiRequest('post', path),
@@ -72,10 +41,7 @@ export const api = {
   delete: (path) => apiRequest('delete', path),
 };
 
-/**
- * Raw access to SuperTest for advanced / one-off requests.
- * @returns {import('supertest').SuperTest}
- */
+/** Raw SuperTest access for one-off/advanced requests. */
 export function rawRequest() {
   return request(config.apiBaseUrl).set('Accept', 'application/json');
 }

@@ -1,14 +1,8 @@
-/**
- * Reusable Chai-based assertions to keep specs DRY and readable.
- */
+/** Reusable Chai assertions to keep specs DRY. */
 import { expect } from 'chai';
 
-/**
- * Asserts the response succeeded (2xx) and that the body is an object with
- * all `requiredKeys` present.
- * @param {import('supertest').Response} res
- * @param {string[]} [requiredKeys]
- */
+/** Asserts a 2xx response whose body is an object with all requiredKeys present. */
+/** @param {import('supertest').Response} res @param {string[]} [requiredKeys] */
 export function expectSuccessWithKeys(res, requiredKeys = []) {
   expect(res.status).to.be.within(200, 299);
   expect(res.body).to.be.an('object');
@@ -17,13 +11,8 @@ export function expectSuccessWithKeys(res, requiredKeys = []) {
   }
 }
 
-/**
- * Asserts an error response: expected status code and an Error-like body
- * containing `message` (or a custom key).
- * @param {import('supertest').Response} res
- * @param {number} status
- * @param {string} [messageProperty]
- */
+/** Asserts an error status and that the body has a message-like property. */
+/** @param {import('supertest').Response} res @param {number} status @param {string} [messageProperty] */
 export function expectError(res, status, messageProperty = 'message') {
   expect(res.status).to.equal(status);
   if (res.body && typeof res.body === 'object') {
@@ -31,33 +20,21 @@ export function expectError(res, status, messageProperty = 'message') {
   }
 }
 
-/**
- * Asserts an array response of a given expected length (exact or range).
- * @param {import('supertest').Response} res
- */
+/** @param {import('supertest').Response} res */
 export function expectArray(res) {
   expect(res.status).to.be.within(200, 299);
   expect(res.body).to.be.an('array');
 }
 
-/**
- * Asserts a paginated/envelope-shaped response.
- * By default expects `{ data: [...], ... }`.
- * @param {import('supertest').Response} res
- * @param {string} [envelopeKey]
- */
+/** Asserts an envelope/paginated shape, e.g. `{ data: [...] }`. */
+/** @param {import('supertest').Response} res @param {string} [envelopeKey] */
 export function expectPaginated(res, envelopeKey = 'data') {
   expectSuccessWithKeys(res, [envelopeKey]);
   expect(res.body[envelopeKey]).to.be.an('array');
 }
 
-/**
- * Validates that `res.body` conforms to a subset shape described by
- * `shape` where each value is a Chai assertion string, e.g.
- *   { id: 'a number', name: 'a string' }
- * @param {import('supertest').Response} res
- * @param {Record<string, string>} shape
- */
+/** Asserts body matches a shape map, e.g. `{ id: 'a number' }`. */
+/** @param {import('supertest').Response} res @param {Record<string, string>} shape */
 export function expectBodyShape(res, shape) {
   expect(res.body).to.be.an('object');
   for (const [key, assertion] of Object.entries(shape)) {
@@ -68,10 +45,8 @@ export function expectBodyShape(res, shape) {
   }
 }
 
-/**
- * Tiny helper mapping human-readable assertion strings to checks.
- * @private
- */
+/** Maps human-readable assertion strings to type checks. */
+/** @private */
 function runChaiAssertion(value, assertion) {
   const normalized = assertion.replace(/\s+/g, ' ').trim();
   if (/a number|an integer|a number/.test(normalized)) return typeof value === 'number';
