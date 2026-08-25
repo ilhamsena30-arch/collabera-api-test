@@ -34,9 +34,6 @@ export function loadConfig() {
 
     auth: {
       token: process.env.AUTH_TOKEN || '',
-      username: process.env.AUTH_USERNAME || '',
-      password: process.env.AUTH_PASSWORD || '',
-      loginEndpoint: process.env.LOGIN_ENDPOINT || '/auth/login',
     },
 
     reports: {

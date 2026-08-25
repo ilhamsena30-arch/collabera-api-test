@@ -1,9 +1,8 @@
 /**
  * GoRest Scenario 1: Create an employee and verify id is numerical.
- * POST https://gorest.co.in/public/v2/users (requires Bearer token in .env).
+ * POST https://gorest.co.in/public/v2/users (requires Bearer token).
  */
 import { expect } from 'chai';
-import config from '../../../config/env.js';
 import { api } from '../../helpers/api-client.js';
 import { generateGoRestUserPayload } from '../../helpers/data-generators.js';
 import { createEmployeeAndExpectNumericId } from '../../helpers/gorest-users.js';
@@ -14,7 +13,7 @@ describe('GoRest — Scenario 1: Create an employee', function () {
   this.timeout(15000);
 
   before(function () {
-    if (!config.auth.token) {
+    if (!process.env.AUTH_TOKEN) {
       // eslint-disable-next-line mocha/no-pending-tests
       this.skip(); // write ops need a token; skip when none configured
     }

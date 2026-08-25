@@ -38,7 +38,6 @@
     "allure-mocha": "^3.10.2",
     "chai": "^6.2.2",
     "cross-env": "^10.1.0",
-    "dotenv": "^17.4.2",
     "eslint": "^10.9.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-mocha": "^12.0.2",
@@ -49,7 +48,6 @@
     "mocha-multi-reporters": "^1.5.1",
     "mochawesome": "^8.0.1",
     "mochawesome-merge": "^5.1.1",
-    "nock": "^14.0.17",
     "prettier": "^3.9.6",
     "supertest": "^7.2.2"
   },
@@ -58,5 +56,8 @@
       "eslint --fix",
       "prettier --write"
     ]
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2"
   }
 }

@@ -11,7 +11,7 @@ The runnable test files are the Mocha test suites:
 | 1 — Create an employee and verify the returned `id` is numerical (`POST /public/v2/users`)    | `test/specs/gorest/scenario-1-create-user.test.js`   |
 | 2 — Verify the first entry's `status` is only `active` or `inactive` (`GET /public/v2/users`) | `test/specs/gorest/scenario-2-verify-status.test.js` |
 
-Supporting reusable code is in `test/helpers/` and `config/`; Mocha settings are in `.mocharc.json`.
+Supporting reusable code is in `test/helpers/`; Mocha settings are in `.mocharc.json`.
 
 ## Prerequisites
 
@@ -29,10 +29,27 @@ Supporting reusable code is in `test/helpers/` and `config/`; Mocha settings are
 
 3. **Set the API access token (required for Scenario 1 only — write operations):**
    - Get a free token: https://gorest.co.in/ → **Sign in** → **Access tokens** → **Create Access Token**.
-   - Copy `.env.example` to `.env`, then set:
+   - Paste it into the local `.env` file. The project's automation loads `.env`
+     automatically via `dotenv` (configured in `.mocharc.json`). Create `.env`
+     from the template if it doesn't exist yet:
      ```bash
+     cp .env.example .env     # macOS / Linux
+     # or copy the file manually on Windows
+     ```
+     Then set:
+     ```dotenv
      AUTH_TOKEN=your_generated_token_here
      ```
+   - **Alternative (per-run / CI):** set it as an environment variable instead of (or in addition to) `.env`:
+     - **PowerShell (Windows):**
+       ```powershell
+       $env:AUTH_TOKEN = "your_generated_token_here"
+       ```
+     - **macOS / Linux (bash/zsh):**
+       ```bash
+       export AUTH_TOKEN=your_generated_token_here
+       ```
+   - ⚠️ Never commit `.env` — it is git-ignored because it contains your token.
    - `GET` requests (Scenario 2) are public and need no token.
 
 4. **Run the tests:**

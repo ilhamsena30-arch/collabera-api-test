@@ -3,7 +3,6 @@
  * GET https://gorest.co.in/public/v2/users (public, no token required).
  */
 import { expect } from 'chai';
-import config from '../../../config/env.js';
 import { api } from '../../helpers/api-client.js';
 import { createEmployeeAndExpectNumericId } from '../../helpers/gorest-users.js';
 
@@ -55,7 +54,7 @@ describe('GoRest — Scenario 2: Verify first entry status', function () {
   });
 
   it('round-trips: a created user is listed with a valid status', async function () {
-    if (!config.auth.token) {
+    if (!process.env.AUTH_TOKEN) {
       // Creating a user needs a token; skip when none is configured.
       // eslint-disable-next-line mocha/no-pending-tests
       this.skip();

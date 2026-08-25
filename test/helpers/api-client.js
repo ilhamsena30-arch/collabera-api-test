@@ -1,13 +1,15 @@
-/** SuperTest wrapper with base URL, auth injection, timeout and optional logging. */
+/** SuperTest wrapper for the GoRest API (base URL, auth header, timeout, logging). */
 import request from 'supertest';
-import config from '../../config/env.js';
 
+const BASE_URL = 'https://gorest.co.in/public/v2'; // GoRest v2
+const REQUEST_TIMEOUT = 10000;
 const LOG_REQUESTS = process.env.LOG_API_REQUESTS === 'true';
 
 /** @param {import('supertest').Test} test */
 function applyAuthHeader(test) {
-  if (config.auth.token) {
-    test.set('Authorization', `Bearer ${config.auth.token}`);
+  // Static bearer token, injected when AUTH_TOKEN env var is present.
+  if (process.env.AUTH_TOKEN) {
+    test.set('Authorization', `Bearer ${process.env.AUTH_TOKEN}`);
   }
   return test;
 }
@@ -25,10 +27,10 @@ function applyRequestLogging(test) {
 
 /** @param {string} method HTTP method @param {string} path relative path */
 function apiRequest(method, path) {
-  const test = request(config.apiBaseUrl)[method](path);
+  const test = request(BASE_URL)[method](path);
   test.set('Accept', 'application/json');
   applyAuthHeader(test);
-  test.timeout(config.requestTimeout);
+  test.timeout(REQUEST_TIMEOUT);
   return applyRequestLogging(test);
 }
 
@@ -43,5 +45,5 @@ export const api = {
 
 /** Raw SuperTest access for one-off/advanced requests. */
 export function rawRequest() {
-  return request(config.apiBaseUrl).set('Accept', 'application/json');
+  return request(BASE_URL).set('Accept', 'application/json');
 }
